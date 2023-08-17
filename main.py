@@ -52,6 +52,14 @@ def convert_to_camel_case(snake_case):
     words = snake_case.split('_')
     return ''.join(word.capitalize() if i > 0 else word for i, word in enumerate(words))
 
+def generate_constructor_parameters(json_data):
+    params = []
+    for key, value in json_data.items():
+        java_type = get_java_type(value)
+        java_var_name = convert_to_camel_case(key)
+        params.append(f"{java_type} {java_var_name}")
+    return ", ".join(params)
+
 def generate_java_class(json_data, class_name):
     java_class = f"package com.mxs.model;\n\n"
     java_class += f"{get_imports(json_data)}\n\n"
@@ -67,9 +75,7 @@ def generate_java_class(json_data, class_name):
     java_class += f"\n    public {class_name}() {{}}\n"
 
     # Constructor with all attributes
-    java_class += f"\n    public {class_name}("
-    constructor_params = ", ".join(f"{get_java_type(value)} {java_var_name}" for key, value in json_data.items())
-    java_class += f"{constructor_params}) {{\n"
+    java_class += f"\n    public {class_name}({generate_constructor_parameters(json_data)}) {{\n"
     for key in json_data.keys():
         java_var_name = convert_to_camel_case(key)
         java_var_name = java_var_name[0].lower() + java_var_name[1:]  # Converte a primeira letra para minúscula

@@ -14,7 +14,7 @@ public class Example {
 
     public Example() {}
 
-    public Example(String numeroGrande, String numeroGrande, int numeroGrande, LocalDateTime numeroGrande, LocalDateTime numeroGrande, BigDecimal numeroGrande) {
+    public Example(String codigo, String descricao, int status, LocalDateTime dataCriacao, LocalDateTime dataModificacao, BigDecimal numeroGrande) {
         this.codigo = codigo;
         this.descricao = descricao;
         this.status = status;
