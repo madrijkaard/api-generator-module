@@ -1,0 +1,8 @@
+{
+    "codigo": "String",
+    "descricao": "String",
+    "status": "int",
+    "data_criacao": "java.time.LocalDateTime",
+    "data_modificacao": "java.time.LocalDateTime",
+    "numero_grande": "java.math.BigDecimal"
+}
