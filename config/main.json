@@ -1,7 +1,8 @@
 {
-    "project-name": "example-project",
+    "spring-boot-starter-parent-version": "3.1.0",
     "group-id": "com.mxs",
-    "artifact-id": "example-module",
-    "version": "1",
-    "main-package": "com.mxs.example"
+    "artifact-id": "user-module",
+    "project-name": "mxs-user-module",
+    "main-package": "com.mxs.user",
+    "java-version": "11"
 }

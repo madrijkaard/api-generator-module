@@ -9,24 +9,29 @@ def create_directories(path):
     except FileExistsError:
         print(f"Directory already exists: {path}")
 
-def create_pom_xml(project_directory, group_id, artifact_id):
+def create_pom_xml(project_directory, spring_boot_starter_parent_version, group_id, artifact_id, project_name, java_version):
     pom_template = """\
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
          
+    <modelVersion>4.0.0</modelVersion>
+    
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.0</version>
+        <version>{spring_boot_starter_parent_version}</version>
         <relativePath/>
     </parent>
-    
-    <modelVersion>4.0.0</modelVersion>
     
     <groupId>{group_id}</groupId>
     <artifactId>{artifact_id}</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <name>{project_name}</name>
+
+    <properties>
+		<java.version>{java_version}</java.version>
+	</properties>
     
     <dependencies>
 		<dependency>
@@ -68,7 +73,12 @@ def create_pom_xml(project_directory, group_id, artifact_id):
 </project>
 """
 
-    pom_content = pom_template.format(group_id=group_id, artifact_id=artifact_id)
+    pom_content = pom_template.format(spring_boot_starter_parent_version=spring_boot_starter_parent_version, 
+                                      group_id=group_id, 
+                                      artifact_id=artifact_id,
+                                      project_name=project_name,
+                                      java_version=java_version)
+    
     pom_path = os.path.join(project_directory, "pom.xml")
 
     with open(pom_path, "w") as pom_file:
@@ -84,10 +94,12 @@ def main():
     config_path = os.path.join(config_directory, "main.json")
     with open(config_path, "r") as config_file:
         config_data = json.load(config_file)
-        project_name = config_data["project-name"]
-        main_package = config_data["main-package"]
+        spring_boot_starter_parent_version = config_data["spring-boot-starter-parent-version"]
         group_id = config_data["group-id"]
         artifact_id = config_data["artifact-id"]
+        project_name = config_data["project-name"]
+        main_package = config_data["main-package"]
+        java_version = config_data["java-version"]
 
     # Criar o diretório com o mesmo nome do project-name no diretório out
     project_directory = os.path.join(out_directory, project_name)
@@ -108,7 +120,7 @@ def main():
         create_directories(test_java_path)
 
     # Criar o arquivo pom.xml dentro do diretório do projeto
-    create_pom_xml(project_directory, group_id, artifact_id)
+    create_pom_xml(project_directory, spring_boot_starter_parent_version, group_id, artifact_id, project_name, java_version)
 
 if __name__ == "__main__":
     main()
