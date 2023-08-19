@@ -85,6 +85,29 @@ def create_pom_xml(project_directory, spring_boot_starter_parent_version, group_
         pom_file.write(pom_content)
         print("Created pom.xml")
 
+def create_java_file(package_path, class_name, main_package):
+    java_template = """\
+package {main_package};
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class {class_name} {{
+    public static void main(String[] args) {{
+        SpringApplication.run({class_name}.class, args);
+    }}
+}}
+"""
+    
+    package_name = ".".join(package_path.split(os.path.sep))
+    java_content = java_template.format(package_name=package_name, class_name=class_name, main_package=main_package)
+    java_path = os.path.join(package_path, f"{class_name}.java")
+
+    with open(java_path, "w") as java_file:
+        java_file.write(java_content)
+        print(f"Created {class_name}.java")
+
 def main():
     root_directory = os.getcwd()
     config_directory = os.path.join(root_directory, "config")
@@ -121,6 +144,11 @@ def main():
 
     # Criar o arquivo pom.xml dentro do diretório do projeto
     create_pom_xml(project_directory, spring_boot_starter_parent_version, group_id, artifact_id, project_name, java_version)
+
+    # Criar o arquivo .java no diretório main_java_path
+    artifact_camel_case = "".join(word.capitalize() for word in artifact_id.split("-"))
+    class_name = f"{artifact_camel_case}Application"
+    create_java_file(main_java_path, class_name, main_package)
 
 if __name__ == "__main__":
     main()
