@@ -4,5 +4,17 @@
     "status": "int",
     "data_criacao": "java.time.LocalDateTime",
     "data_modificacao": "java.time.LocalDateTime",
-    "numero_grande": "java.math.BigDecimal"
+    "numero_grande": "java.math.BigDecimal",
+    "lista_compra": {
+        "type": "java.util.List",
+        "of": {
+            "value": "String"
+        }
+    },
+    "lista_venda": {
+        "type": "java.util.Set",
+        "of": {
+            "value": "java.math.BigDecimal"
+        }
+    }
 }

@@ -52,65 +52,93 @@ def convert_to_camel_case(snake_case):
     words = snake_case.split('_')
     return ''.join(word.capitalize() if i > 0 else word for i, word in enumerate(words))
 
+def generate_field_declaration(field_name, field_type):
+    if field_type.startswith('java.util.'):
+        collection_type = field_type.split('.')[-1]
+        return f"private {collection_type}<{get_java_type(field_type['of']['value'])}> {field_name};"
+    else:
+        return f"private {field_type} {field_name};"
+
+def generate_getter_and_setter(field_name, field_type):
+    getter_name = "get" + field_name[0].upper() + field_name[1:]
+    setter_name = "set" + field_name[0].upper() + field_name[1:]
+    
+    if field_type.startswith('java.util.'):
+        collection_type = field_type.split('.')[-1]
+        element_type = get_java_type(field_type['of']['value'])
+        getter = f"public {collection_type}<{element_type}> {getter_name}() {{\n    return {field_name};\n}}"
+        setter = f"public void {setter_name}({collection_type}<{element_type}> {field_name}) {{\n    this.{field_name} = {field_name};\n}}"
+    else:
+        getter = f"public {field_type} {getter_name}() {{\n    return {field_name};\n}}"
+        setter = f"public void {setter_name}({field_type} {field_name}) {{\n    this.{field_name} = {field_name};\n}}"
+    
+    return getter, setter
+
 def generate_constructor_parameters(json_data):
     params = []
     for key, value in json_data.items():
         java_type = get_java_type(value)
         java_var_name = convert_to_camel_case(key)
+        java_var_name = java_var_name[0].lower() + java_var_name[1:]
         params.append(f"{java_type} {java_var_name}")
     return ", ".join(params)
 
+def generate_imports(json_data):
+    imports = set()
+    for value in json_data.values():
+        if isinstance(value, dict):
+            if 'type' in value:
+                imports.add(value['type'])
+        elif '.' in value:
+            imports.add(value)
+    return "\n".join(f"import {import_value};" for import_value in sorted(imports))
+
 def generate_java_class(json_data, class_name):
     java_class = f"package com.mxs.model;\n\n"
-    java_class += f"{get_imports(json_data)}\n\n"
+    java_class += f"{generate_imports(json_data)}\n\n"
     java_class += f"public class {class_name} {{\n\n"
 
     for key, value in json_data.items():
         java_type = get_java_type(value)
         java_var_name = convert_to_camel_case(key)
-        java_var_name = java_var_name[0].lower() + java_var_name[1:]  # Converte a primeira letra para minúscula
-        java_class += f"    private {java_type} {java_var_name};\n"
+        java_var_name = java_var_name[0].lower() + java_var_name[1:]
+        java_class += f"    {generate_field_declaration(java_var_name, java_type)}\n"
 
-    # Empty constructor
     java_class += f"\n    public {class_name}() {{}}\n"
 
-    # Constructor with all attributes
-    java_class += f"\n    public {class_name}({generate_constructor_parameters(json_data)}) {{\n"
+    constructor_params = generate_constructor_parameters(json_data)
+    java_class += f"\n    public {class_name}({constructor_params}) {{\n"
     for key in json_data.keys():
         java_var_name = convert_to_camel_case(key)
-        java_var_name = java_var_name[0].lower() + java_var_name[1:]  # Converte a primeira letra para minúscula
+        java_var_name = java_var_name[0].lower() + java_var_name[1:]
         java_class += f"        this.{java_var_name} = {java_var_name};\n"
     java_class += "    }\n"
 
-    # Getters and Setters
     for key, value in json_data.items():
         java_type = get_java_type(value)
         java_var_name = convert_to_camel_case(key)
-        java_var_name = java_var_name[0].lower() + java_var_name[1:]  # Converte a primeira letra para minúscula
-        java_getter_name = "get" + java_var_name[0].upper() + java_var_name[1:]  # Primeira letra do getter em maiúscula
-        java_setter_name = "set" + java_var_name[0].upper() + java_var_name[1:]  # Primeira letra do setter em maiúscula
-        java_class += f"\n    public {java_type} {java_getter_name}() {{\n"
-        java_class += f"        return {java_var_name};\n"
-        java_class += "    }\n"
-        java_class += f"\n    public void {java_setter_name}({java_type} {java_var_name}) {{\n"
-        java_class += f"        this.{java_var_name} = {java_var_name};\n"
-        java_class += "    }\n"
+        java_var_name = java_var_name[0].lower() + java_var_name[1:]
+        java_getter_name = "get" + java_var_name[0].upper() + java_var_name[1:]
+        java_setter_name = "set" + java_var_name[0].upper() + java_var_name[1:]
+        
+        getter, setter = generate_getter_and_setter(java_var_name, java_type)
+        
+        java_class += f"\n    {getter}\n"
+        java_class += f"\n    {setter}\n"
 
     java_class += "}\n"
     return java_class
 
 def get_java_type(value):
-    if '.' in value:
+    if isinstance(value, dict):
+        if 'type' in value and 'of' in value:
+            collection_type = value['type'].split('.')[-1]
+            element_type = get_java_type(value['of']['value'])
+            return f"{collection_type}<{element_type}>"
+    elif '.' in value:
         _, class_name = value.rsplit('.', 1)
         return class_name
     return ObjectType[value].value
-
-def get_imports(json_data):
-    imports = set()
-    for value in json_data.values():
-        if '.' in value:
-            imports.add(value)
-    return "\n".join(f"import {import_value};" for import_value in sorted(imports))
 
 def main():
     input_directory = "in"
@@ -126,7 +154,7 @@ def main():
             json_data = json.load(f)
         
         class_name = convert_to_camel_case(input_file.replace(".json", ""))
-        class_name = class_name[0].upper() + class_name[1:]  # Primeira letra do nome da classe em maiúscula
+        class_name = class_name[0].upper() + class_name[1:]
         java_class = generate_java_class(json_data, class_name)
         
         output_file = os.path.join(output_directory, f"{class_name}.java")
