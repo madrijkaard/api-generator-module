@@ -1,0 +1,7 @@
+{
+    "project-name": "example-project",
+    "main-package": "com.mxs.example",
+    "group-id": "com.mxs",
+    "artifact-id": "example-module",
+    "version": "1"
+}
