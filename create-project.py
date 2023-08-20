@@ -9,7 +9,7 @@ def create_directories(path):
     except FileExistsError:
         print(f"Directory already exists: {path}")
 
-def create_pom_xml(project_directory, pom_template_path, spring_boot_starter_parent_version, group_id, artifact_id, project_name, java_version):
+def create_pom_xml(project_directory, pom_template_path, spring_boot_starter_parent_version, group_id, artifact_id, project_name, description, java_version):
     with open(pom_template_path, "r") as template_file:
         pom_template = template_file.read()
 
@@ -21,6 +21,8 @@ def create_pom_xml(project_directory, pom_template_path, spring_boot_starter_par
         "{artifact_id}", artifact_id
     ).replace(
         "{project_name}", project_name
+    ).replace(
+        "{description}", description
     ).replace(
         "{java_version}", str(java_version)
     )
@@ -75,6 +77,7 @@ def main():
         group_id = config_data["group-id"]
         artifact_id = config_data["artifact-id"]
         project_name = config_data["project-name"]
+        description = config_data["description"]
         main_package = config_data["main-package"]
         java_version = config_data["java-version"]
 
@@ -102,6 +105,7 @@ def main():
         group_id,
         artifact_id,
         project_name,
+        description,
         java_version
     )
 

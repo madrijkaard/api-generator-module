@@ -15,6 +15,7 @@
     <artifactId>{artifact_id}</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>{project_name}</name>
+	<description>{description}</description>
 
     <properties>
 		<java.version>{java_version}</java.version>

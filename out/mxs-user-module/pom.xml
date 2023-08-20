@@ -15,6 +15,7 @@
     <artifactId>user-module</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>mxs-user-module</name>
+	<description>example</description>
 
     <properties>
 		<java.version>11</java.version>
