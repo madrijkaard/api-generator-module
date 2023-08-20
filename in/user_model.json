@@ -1,0 +1,10 @@
+{
+    "code" : "java.util.UUID",
+    "username" : "String",
+    "password" : "String",
+    "email" : "String",
+    "date_of_birth" : "java.time.LocalDate",
+    "registration_date" : "java.time.LocalDateTime",
+    "last_modified_date" : "java.time.LocalDateTime",
+    "status" : "boolean"
+}

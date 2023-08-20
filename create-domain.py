@@ -19,6 +19,7 @@ class ObjectType(Enum):
     Float = 'Float'
     Character = 'Character'
     Boolean = 'Boolean'
+    java_util_UUID = 'java.util.UUID'
     java_math_BigDecimal = 'java.math.BigDecimal'
     java_util_ArrayList = 'java.util.ArrayList'
     java_util_LinkedList = 'java.util.LinkedList'
