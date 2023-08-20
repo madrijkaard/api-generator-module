@@ -44,8 +44,6 @@ def create_java_file(main_package, package_path, class_name, java_application_te
         "{class_name}", class_name
     )
 
-    #package_name = ".".join(package_path.split(os.path.sep))
-    #java_content = java_template.format(main_package=main_package, package_name=package_name, class_name=class_name)
     java_path = os.path.join(package_path, f"{class_name}.java")
 
     with open(java_path, "w") as java_file:
