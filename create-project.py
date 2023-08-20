@@ -9,7 +9,7 @@ def create_directories(path):
     except FileExistsError:
         print(f"Directory already exists: {path}")
 
-def create_pom_xml(project_directory, pom_template_path, spring_boot_starter_parent_version, group_id, artifact_id, project_name, description, java_version):
+def create_pom_xml(spring_boot_starter_parent_version, group_id, artifact_id, project_name, description, java_version, pom_template_path, project_directory):
     with open(pom_template_path, "r") as template_file:
         pom_template = template_file.read()
 
@@ -33,23 +33,19 @@ def create_pom_xml(project_directory, pom_template_path, spring_boot_starter_par
         pom_file.write(pom_content)
         print("Created pom.xml")
 
-def create_java_file(package_path, class_name, main_package):
-    java_template = """\
-package {main_package};
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-@SpringBootApplication
-public class {class_name} {{
-    public static void main(String[] args) {{
-        SpringApplication.run({class_name}.class, args);
-    }}
-}}
-"""
+def create_java_file(main_package, package_path, class_name, java_application_template_path):
     
-    package_name = ".".join(package_path.split(os.path.sep))
-    java_content = java_template.format(package_name=package_name, class_name=class_name, main_package=main_package)
+    with open(java_application_template_path, "r") as template_file:
+        java_template = template_file.read()
+
+    java_content = java_template.replace(
+        "{main_package}", main_package
+    ).replace(
+        "{class_name}", class_name
+    )
+
+    #package_name = ".".join(package_path.split(os.path.sep))
+    #java_content = java_template.format(main_package=main_package, package_name=package_name, class_name=class_name)
     java_path = os.path.join(package_path, f"{class_name}.java")
 
     with open(java_path, "w") as java_file:
@@ -78,10 +74,11 @@ def main():
         artifact_id = config_data["artifact-id"]
         project_name = config_data["project-name"]
         description = config_data["description"]
-        main_package = config_data["main-package"]
         java_version = config_data["java-version"]
+        main_package = config_data["main-package"]
 
     pom_template_path = os.path.join(config_directory, "maven", "main.xml")
+    java_application_template_path = os.path.join(config_directory, "java", "Application.java")
 
     project_directory = os.path.join(out_directory, project_name)
     create_directories(project_directory)
@@ -99,19 +96,19 @@ def main():
         create_directories(test_java_path)
 
     create_pom_xml(
-        project_directory,
-        pom_template_path,
         spring_boot_starter_parent_version,
         group_id,
         artifact_id,
         project_name,
         description,
-        java_version
+        java_version,
+        pom_template_path,
+        project_directory
     )
 
     artifact_camel_case = "".join(word.capitalize() for word in artifact_id.split("-"))
     class_name = f"{artifact_camel_case}Application"
-    create_java_file(main_java_path, class_name, main_package)
+    create_java_file(main_package, main_java_path, class_name, java_application_template_path)
 
     create_application_properties(os.path.join(project_directory, "src/main/resources"))
     create_application_properties(os.path.join(project_directory, "src/test/resources"))

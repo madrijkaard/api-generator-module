@@ -1,12 +1,12 @@
-package com.mxs.user;
+package {main_package};
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class UserModuleApplication {
+public class {class_name} {
 
     public static void main(String[] args) {
-        SpringApplication.run(UserModuleApplication.class, args);
+        SpringApplication.run({class_name}.class, args);
     }
 }

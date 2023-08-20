@@ -6,6 +6,9 @@
     "description" : "example",
     "main-package": "com.mxs.user",
     "java-version": 11,
+    "custom-property": false,
+    "custom-dependency": false,
+    "custom-build": false,
     "custom-repository": false,
     "custom-plugin-repository": false
 }
