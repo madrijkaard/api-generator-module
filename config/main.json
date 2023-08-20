@@ -3,6 +3,9 @@
     "group-id": "com.mxs",
     "artifact-id": "user-module",
     "project-name": "mxs-user-module",
+    "description" : "",
     "main-package": "com.mxs.user",
-    "java-version": "11"
+    "java-version": 11,
+    "custom-repository": false,
+    "custom-plugin-repository": false
 }
