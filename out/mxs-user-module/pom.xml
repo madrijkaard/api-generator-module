@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.0</version>
+        <version>2.7.14</version>
         <relativePath/>
     </parent>
     
@@ -15,7 +15,7 @@
     <artifactId>user-module</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>mxs-user-module</name>
-	<description>example</description>
+	<description>Module responsible for managing platform users.</description>
 
     <properties>
 		<java.version>11</java.version>

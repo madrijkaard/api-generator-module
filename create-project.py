@@ -92,6 +92,11 @@ def main():
         test_java_path = os.path.join(test_java_path, package_name)
         create_directories(main_java_path)
         create_directories(test_java_path)
+    
+    for package_name in ["config", "constant", "controller", "converter", "dto", "especification", 
+                         "exception", "model", "repository", "request", "response", "service", "type"]:
+        module_package = os.path.join(main_java_path, package_name)
+        create_directories(module_package)
 
     create_pom_xml(
         spring_boot_starter_parent_version,
