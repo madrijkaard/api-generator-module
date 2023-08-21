@@ -9,7 +9,8 @@ def create_directories(path):
     except FileExistsError:
         print(f"Directory already exists: {path}")
 
-def create_pom_xml(spring_boot_starter_parent_version, group_id, artifact_id, project_name, description, java_version, pom_template_path, project_directory):
+def create_pom_xml(config_directory, spring_boot_starter_parent_version, group_id, artifact_id, project_name, 
+                   description, java_version, pom_template_path, project_directory, add_jpa_dependency):
     with open(pom_template_path, "r") as template_file:
         pom_template = template_file.read()
 
@@ -26,6 +27,12 @@ def create_pom_xml(spring_boot_starter_parent_version, group_id, artifact_id, pr
     ).replace(
         "{java_version}", str(java_version)
     )
+
+    if add_jpa_dependency:
+        jpa_dependency_path = os.path.join(config_directory, "dependency", "jpa.xml")
+        with open(jpa_dependency_path, "r") as jpa_file:
+            jpa_dependency = jpa_file.read()
+            pom_content = pom_content.replace("</dependencies>", f"{jpa_dependency}\n\t</dependencies>")
 
     pom_path = os.path.join(project_directory, "pom.xml")
 
@@ -98,7 +105,10 @@ def main():
         module_package = os.path.join(main_java_path, package_name)
         create_directories(module_package)
 
+    add_jpa_dependency = config_data.get("jpa", False)
+
     create_pom_xml(
+        config_directory,
         spring_boot_starter_parent_version,
         group_id,
         artifact_id,
@@ -106,7 +116,8 @@ def main():
         description,
         java_version,
         pom_template_path,
-        project_directory
+        project_directory,
+        add_jpa_dependency
     )
 
     artifact_camel_case = "".join(word.capitalize() for word in artifact_id.split("-"))

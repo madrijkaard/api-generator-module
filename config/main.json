@@ -6,6 +6,7 @@
     "description" : "Module responsible for managing platform users.",
     "main-package": "com.mxs.user",
     "java-version": 11,
+    "jpa": true,
     "custom-property": false,
     "custom-dependency": false,
     "custom-build": false,
