@@ -1,4 +1,4 @@
-package com.mxs.model;
+package com.mxs.user.model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

@@ -94,8 +94,8 @@ def generate_imports(json_data):
             imports.add(value)
     return "\n".join(f"import {import_value};" for import_value in sorted(imports))
 
-def generate_java_class(json_data, class_name):
-    java_class = f"package com.mxs.model;\n\n"
+def generate_java_class(json_data, class_name, main_package):
+    java_class = f"package {main_package}.model;\n\n"
     java_class += f"{generate_imports(json_data)}\n\n"
     java_class += f"public class {class_name} {{\n\n"
 
@@ -142,8 +142,17 @@ def get_java_type(value):
     return ObjectType[value].value
 
 def main():
+    config_file_path = "config/main.json"
+
+    with open(config_file_path, 'r') as config_file:
+        config_data = json.load(config_file)
+
+    project_name = config_data["project-name"]
+    main_package = config_data["main-package"]
+    
     input_directory = "in"
-    output_directory = "out"
+    output_base_directory = "out"
+    output_directory = os.path.join(output_base_directory, project_name, "src/main/java", main_package.replace(".", "/"), "model")
 
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
@@ -156,7 +165,7 @@ def main():
         
         class_name = convert_to_camel_case(input_file.replace(".json", ""))
         class_name = class_name[0].upper() + class_name[1:]
-        java_class = generate_java_class(json_data, class_name)
+        java_class = generate_java_class(json_data, class_name, main_package)
         
         output_file = os.path.join(output_directory, f"{class_name}.java")
         with open(output_file, 'w') as f:

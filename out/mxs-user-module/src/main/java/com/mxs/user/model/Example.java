@@ -1,4 +1,4 @@
-package com.mxs.model;
+package com.mxs.user.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
