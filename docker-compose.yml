@@ -1,0 +1,132 @@
+version: "3.7"
+
+services:
+  redis:
+    image: redis:6.2.5
+    container_name: redis
+    command: redis-server --requirepass mxs
+    ports:
+      - 6379:6379
+    volumes:
+      - ./volumes/redis/redis-data:/var/lib/redis
+      - ./volumes/redis/redis-config-data:/usr/local/etc/redis/redis.conf
+
+  #-----------------------------------------------------------
+
+  phpredisadmin:
+    image: erikdubbelboer/phpredisadmin
+    container_name: php_redis_admin
+    ports:
+      - 8082:80
+    environment:
+      - REDIS_1_HOST=redis
+      - REDIS_1_PORT=6379
+      - REDIS_1_AUTH=mxs
+
+  #-----------------------------------------------------------
+
+  pg-sql:
+    image: postgres:12.2
+    container_name: postgre_sql
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: secret
+      PGDATA: /var/lib/postgresql/data
+    restart: always
+    ports:
+      - 5010:5432
+    volumes:
+      - ./volumes/postgresql/pgsql-data:/var/lib/postgresql/data
+
+  #-----------------------------------------------------------
+
+  pg-admin:
+    image: dpage/pgadmin4:4.18
+    container_name: pg_admin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: secret
+      PGADMIN_LISTEN_PORT: 80
+    user: root
+    restart: always
+    ports:
+      - 5011:80 #Acesso: http://localhost:5011/browser/
+    volumes:
+      - ./volumes/postgresql/pgadmin-data:/var/lib/pgadmin
+    links:
+      - pg-sql:pgsql-server
+
+  #-----------------------------------------------------------
+
+  rabbit-mq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbit_mq
+    ports:
+      - 5672:5672
+      - 15672:15672 #Acesso: http://localhost:15672
+    volumes:
+      - ./volumes/rabbitmq/rabbitmq-data:/var/lib/rabbitmq/
+    networks:
+      - rabbit_mq_net
+
+  #-----------------------------------------------------------
+
+  mongo:
+    image: mongo
+    container_name: mongo_db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    restart: always
+    ports:
+      - 27017:27017
+
+  #-----------------------------------------------------------
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo_express
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: secret
+      ME_CONFIG_MONGODB_SERVER: mongo
+    restart: always
+    ports:
+      - 8081:8081 #Acesso: http://localhost:8081
+
+#-----------------------------------------------------------
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - ./volumes/prometheus-data:/etc/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    restart: always
+
+#-----------------------------------------------------------
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 3000:3000
+    volumes:
+      - ./grafana:/var/lib/grafana
+    restart: always
+
+#-----------------------------------------------------------
+
+networks:
+  rabbit_mq_net:
+    driver: bridge
+
+volumes:
+  redis-data:
+  redis-config-data:
+  pgsql-data:
+  pgadmin-data:
+  rabbitmq-data:
+  prometheus-data:

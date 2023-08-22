@@ -11,6 +11,7 @@ def create_directories(path):
 
 def create_pom_xml(config_directory, spring_boot_starter_parent_version, group_id, artifact_id, project_name, 
                    description, java_version, pom_template_path, project_directory, add_jpa_dependency):
+    
     with open(pom_template_path, "r") as template_file:
         pom_template = template_file.read()
 
@@ -30,10 +31,10 @@ def create_pom_xml(config_directory, spring_boot_starter_parent_version, group_i
 
     if add_jpa_dependency:
         jpa_dependency_path = os.path.join(config_directory, "dependency", "jpa.xml")
-        with open(jpa_dependency_path, "r") as jpa_file:
-            jpa_dependency = jpa_file.read()
+        with open(jpa_dependency_path, "r") as jpa_dependency_file:
+            jpa_dependency = jpa_dependency_file.read()
             pom_content = pom_content.replace("</dependencies>", f"{jpa_dependency}\n\t</dependencies>")
-
+            
     pom_path = os.path.join(project_directory, "pom.xml")
 
     with open(pom_path, "w") as pom_file:
@@ -45,11 +46,12 @@ def create_java_file(main_package, package_path, class_name, java_application_te
     with open(java_application_template_path, "r") as template_file:
         java_template = template_file.read()
 
-    java_content = java_template.replace(
-        "{main_package}", main_package
-    ).replace(
-        "{class_name}", class_name
-    )
+    java_content = java_template.replace("{main_package}", main_package).replace("{class_name}", class_name)
+    
+    java_content = java_content.replace("import org.springframework.boot.autoconfigure.SpringBootApplication;", 
+                                        "import org.springframework.boot.autoconfigure.SpringBootApplication;\n" + 
+                                        "import org.springframework.data.jpa.repository.config.EnableJpaAuditing;")
+    java_content = java_content.replace("@SpringBootApplication", "@EnableJpaAuditing\n@SpringBootApplication")
 
     java_path = os.path.join(package_path, f"{class_name}.java")
 
@@ -57,8 +59,15 @@ def create_java_file(main_package, package_path, class_name, java_application_te
         java_file.write(java_content)
         print(f"Created {class_name}.java")
 
-def create_application_properties(directory):
+def create_application_properties(directory, config_directory, add_jpa_dependency):
+    
     application_properties_content = ""
+
+    if add_jpa_dependency:
+        jpa_properties_path = os.path.join(config_directory, "property", "jpa.properties")
+        with open(jpa_properties_path, "r") as jpa_properties_file:
+            jpa_properties = jpa_properties_file.read()
+            application_properties_content = jpa_properties
 
     properties_path = os.path.join(directory, "application.properties")
 
@@ -81,6 +90,7 @@ def main():
         description = config_data["description"]
         java_version = config_data["java-version"]
         main_package = config_data["main-package"]
+        add_jpa_dependency = config_data.get("jpa", False)
 
     pom_template_path = os.path.join(config_directory, "maven", "main.xml")
     java_application_template_path = os.path.join(config_directory, "java", "Application.java")
@@ -105,8 +115,6 @@ def main():
         module_package = os.path.join(main_java_path, package_name)
         create_directories(module_package)
 
-    add_jpa_dependency = config_data.get("jpa", False)
-
     create_pom_xml(
         config_directory,
         spring_boot_starter_parent_version,
@@ -117,15 +125,14 @@ def main():
         java_version,
         pom_template_path,
         project_directory,
-        add_jpa_dependency
-    )
+        add_jpa_dependency)
 
     artifact_camel_case = "".join(word.capitalize() for word in artifact_id.split("-"))
     class_name = f"{artifact_camel_case}Application"
     create_java_file(main_package, main_java_path, class_name, java_application_template_path)
 
-    create_application_properties(os.path.join(project_directory, "src/main/resources"))
-    create_application_properties(os.path.join(project_directory, "src/test/resources"))
+    create_application_properties(os.path.join(project_directory, "src/main/resources"), config_directory, add_jpa_dependency)
+    create_application_properties(os.path.join(project_directory, "src/test/resources"), config_directory, add_jpa_dependency)
 
 if __name__ == "__main__":
     main()
