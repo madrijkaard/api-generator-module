@@ -70,8 +70,8 @@ def generate_getter_and_setter(field_name, field_type):
         getter = f"public {collection_type}<{element_type}> {getter_name}() {{\n    return {field_name};\n}}"
         setter = f"public void {setter_name}({collection_type}<{element_type}> {field_name}) {{\n    this.{field_name} = {field_name};\n}}"
     else:
-        getter = f"public {field_type} {getter_name}() {{\n    return {field_name};\n}}"
-        setter = f"public void {setter_name}({field_type} {field_name}) {{\n    this.{field_name} = {field_name};\n}}"
+        getter = f"public {field_type} {getter_name}() {{\n\t    return {field_name};\n\t}}"
+        setter = f"public void {setter_name}({field_type} {field_name}) {{\n\t    this.{field_name} = {field_name};\n\t}}"
     
     return getter, setter
 
@@ -119,8 +119,6 @@ def generate_java_class(json_data, class_name, main_package):
         java_type = get_java_type(value)
         java_var_name = convert_to_camel_case(key)
         java_var_name = java_var_name[0].lower() + java_var_name[1:]
-        java_getter_name = "get" + java_var_name[0].upper() + java_var_name[1:]
-        java_setter_name = "set" + java_var_name[0].upper() + java_var_name[1:]
         
         getter, setter = generate_getter_and_setter(java_var_name, java_type)
         
