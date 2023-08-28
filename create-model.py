@@ -97,7 +97,7 @@ def generate_imports(json_data):
 def generate_java_class(json_data, class_name, main_package):
     java_class = f"package {main_package}.model;\n\n"
     java_class += f"{generate_imports(json_data)}\n\n"
-    java_class += f"public class {class_name} {{\n\n"
+    java_class += f"public class {class_name}Model {{\n\n"
 
     for key, value in json_data.items():
         java_type = get_java_type(value)
@@ -105,10 +105,10 @@ def generate_java_class(json_data, class_name, main_package):
         java_var_name = java_var_name[0].lower() + java_var_name[1:]
         java_class += f"    {generate_field_declaration(java_var_name, java_type)}\n"
 
-    java_class += f"\n    public {class_name}() {{}}\n"
+    java_class += f"\n    public {class_name}Model() {{}}\n"
 
     constructor_params = generate_constructor_parameters(json_data)
-    java_class += f"\n    public {class_name}({constructor_params}) {{\n"
+    java_class += f"\n    public {class_name}Model({constructor_params}) {{\n"
     for key in json_data.keys():
         java_var_name = convert_to_camel_case(key)
         java_var_name = java_var_name[0].lower() + java_var_name[1:]
@@ -165,7 +165,7 @@ def main():
         class_name = class_name[0].upper() + class_name[1:]
         java_class = generate_java_class(json_data, class_name, main_package)
         
-        output_file = os.path.join(output_directory, f"{class_name}.java")
+        output_file = os.path.join(output_directory, f"{class_name}Model.java")
         with open(output_file, 'w') as f:
             f.write(java_class)
 
