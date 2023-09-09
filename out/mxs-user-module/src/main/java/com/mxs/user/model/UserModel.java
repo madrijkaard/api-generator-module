@@ -8,14 +8,22 @@ import java.util.UUID;
 @Entity(name = "user")
 public class UserModel {
 
-    private UUID code;
-    private String username;
-    private String password;
-    private String email;
-    private LocalDate dateOfBirth;
-    private LocalDateTime registrationDate;
-    private LocalDateTime lastModifiedDate;
-    private boolean status;
+    @Column(name = "code", nullable = true)
+	private UUID code;
+    @Column(name = "username", nullable = true)
+	private String username;
+    @Column(name = "password", nullable = true)
+	private String password;
+    @Column(name = "email", nullable = true)
+	private String email;
+    @Column(name = "date_of_birth", nullable = true)
+	private LocalDate dateOfBirth;
+    @Column(name = "registration_date", nullable = true)
+	private LocalDateTime registrationDate;
+    @Column(name = "last_modified_date", nullable = true)
+	private LocalDateTime lastModifiedDate;
+    @Column(name = "status", nullable = true)
+	private boolean status;
 
     public UserModel() {}
 

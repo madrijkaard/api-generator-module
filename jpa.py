@@ -15,6 +15,7 @@ model_dir = os.path.join(output_base_directory, project_name, "src/main/java", m
 
 # Expressão regular para encontrar a definição de classe
 class_pattern = re.compile(r'^\s*public\s+class\s+(\w+)Model\s+{', re.MULTILINE)
+attribute_pattern = re.compile(r'^\s*(private\s+\w+\s+(\w+);)', re.MULTILINE)
 
 # Verifica a versão do Spring Boot no arquivo "pom.xml"
 pom_xml_path = os.path.join(output_base_directory, project_name, "pom.xml")
@@ -37,10 +38,12 @@ for filename in os.listdir(model_dir):
             java_code = java_file.read()
         
         # Encontra o nome da classe usando a expressão regular
-        match = class_pattern.search(java_code)
-        if match:
-            class_name = match.group(1)
-            
+        match_class = class_pattern.search(java_code)
+        if match_class:
+            class_name = match_class.group(1)
+
+
+
             # Converte o nome da classe para minúsculas e remove o sufixo "Model"
             entity_name = class_name.lower().replace("model", "")
             
@@ -53,8 +56,22 @@ for filename in os.listdir(model_dir):
             
             # Adiciona a anotação @Entity acima da definição da classe
             entity_annotation = f'\n@Entity(name = "{entity_name}")'
-            java_code = class_pattern.sub(entity_annotation + match.group(0), java_code)
+            java_code = class_pattern.sub(entity_annotation + match_class.group(0), java_code)
+
+
+
             
-            # Escreve o código Java modificado de volta para o arquivo
-            with open(file_path, 'w') as java_file:
-                java_file.write(java_code)
+            # Encontra os atributos usando a expressão regular
+            attributes = attribute_pattern.findall(java_code)
+            
+            if attributes:
+                # Atualiza o código Java com as anotações @Column
+                updated_code = java_code
+                for attribute, attribute_name in attributes:
+                    column_name = re.sub('([a-z0-9])([A-Z])', r'\1_\2', attribute_name).lower()
+                    column_annotation = f'@Column(name = "{column_name}", nullable = true)\n\t{attribute}'
+                    updated_code = updated_code.replace(attribute, column_annotation, 1)
+                
+                # Escreve o código Java modificado de volta para o arquivo
+                with open(file_path, 'w') as java_file:
+                    java_file.write(updated_code)

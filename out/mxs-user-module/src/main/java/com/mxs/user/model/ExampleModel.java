@@ -9,12 +9,18 @@ import java.util.Set;
 @Entity(name = "example")
 public class ExampleModel {
 
-    private String codigo;
-    private String descricao;
-    private int status;
-    private LocalDateTime dataCriacao;
-    private LocalDateTime dataModificacao;
-    private BigDecimal numeroGrande;
+    @Column(name = "codigo", nullable = true)
+	private String codigo;
+    @Column(name = "descricao", nullable = true)
+	private String descricao;
+    @Column(name = "status", nullable = true)
+	private int status;
+    @Column(name = "data_criacao", nullable = true)
+	private LocalDateTime dataCriacao;
+    @Column(name = "data_modificacao", nullable = true)
+	private LocalDateTime dataModificacao;
+    @Column(name = "numero_grande", nullable = true)
+	private BigDecimal numeroGrande;
     private List<String> listaCompra;
     private Set<BigDecimal> listaVenda;
 
