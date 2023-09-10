@@ -1,6 +1,7 @@
 package com.mxs.user.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -9,7 +10,10 @@ import java.util.Set;
 @Entity(name = "example")
 public class ExampleModel {
 
-    @Column(name = "codigo")
+    @Id
+	@GeneratedValue(generator = "increment")
+	@GenericGenerator(name = "increment", strategy = "increment")
+	@Column(name = "codigo")
 	private String codigo;
     @Column(name = "descricao")
 	private String descricao;

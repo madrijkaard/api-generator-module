@@ -42,8 +42,6 @@ for filename in os.listdir(model_dir):
         if match_class:
             class_name = match_class.group(1)
 
-
-
             # Converte o nome da classe para minúsculas e remove o sufixo "Model"
             entity_name = class_name.lower().replace("model", "")
             
@@ -53,6 +51,10 @@ for filename in os.listdir(model_dir):
             
             # Substitui o package e adiciona o import
             java_code = java_code.replace(package_declaration, import_statement_with_package, 1)
+
+            # Adiciona o import "import org.hibernate.annotations.GenericGenerator;"
+            if "import jakarta.persistence.*;" in java_code:
+                java_code = java_code.replace("import jakarta.persistence.*;", "import jakarta.persistence.*;\nimport org.hibernate.annotations.GenericGenerator;")
             
             # Adiciona a anotação @Entity acima da definição da classe
             entity_annotation = f'\n@Entity(name = "{entity_name}")'
@@ -64,11 +66,22 @@ for filename in os.listdir(model_dir):
             if attributes:
                 # Atualiza o código Java com as anotações @Column
                 updated_code = java_code
+
+                # Adiciona o atributo "id" no início da lista de atributos
+                id_annotation = '@Id\n\t@GeneratedValue(generator = "increment")\n\t@GenericGenerator(name = "increment", strategy = "increment")'
+                updated_code = updated_code.replace(attributes[0][0], id_annotation + '\n\t' + attributes[0][0], 1)
+
                 for attribute, attribute_name in attributes:
                     column_name = re.sub('([a-z0-9])([A-Z])', r'\1_\2', attribute_name).lower()
                     column_annotation = f'@Column(name = "{column_name}")\n\t{attribute}'
                     updated_code = updated_code.replace(attribute, column_annotation, 1)
-                
+
                 # Escreve o código Java modificado de volta para o arquivo
                 with open(file_path, 'w') as java_file:
                     java_file.write(updated_code)
+
+
+
+
+
+

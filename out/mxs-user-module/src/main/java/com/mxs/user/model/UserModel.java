@@ -1,6 +1,7 @@
 package com.mxs.user.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -8,7 +9,10 @@ import java.util.UUID;
 @Entity(name = "user")
 public class UserModel {
 
-    @Column(name = "code")
+    @Id
+	@GeneratedValue(generator = "increment")
+	@GenericGenerator(name = "increment", strategy = "increment")
+	@Column(name = "code")
 	private UUID code;
     @Column(name = "username")
 	private String username;
