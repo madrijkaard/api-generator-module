@@ -58,9 +58,6 @@ for filename in os.listdir(model_dir):
             entity_annotation = f'\n@Entity(name = "{entity_name}")'
             java_code = class_pattern.sub(entity_annotation + match_class.group(0), java_code)
 
-
-
-            
             # Encontra os atributos usando a expressão regular
             attributes = attribute_pattern.findall(java_code)
             
@@ -69,7 +66,7 @@ for filename in os.listdir(model_dir):
                 updated_code = java_code
                 for attribute, attribute_name in attributes:
                     column_name = re.sub('([a-z0-9])([A-Z])', r'\1_\2', attribute_name).lower()
-                    column_annotation = f'@Column(name = "{column_name}", nullable = true)\n\t{attribute}'
+                    column_annotation = f'@Column(name = "{column_name}")\n\t{attribute}'
                     updated_code = updated_code.replace(attribute, column_annotation, 1)
                 
                 # Escreve o código Java modificado de volta para o arquivo
