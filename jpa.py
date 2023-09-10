@@ -68,7 +68,7 @@ for filename in os.listdir(model_dir):
                 updated_code = java_code
 
                 # Adiciona o atributo "id" no início da lista de atributos
-                id_annotation = '@Id\n\t@GeneratedValue(generator = "increment")\n\t@GenericGenerator(name = "increment", strategy = "increment")'
+                id_annotation = '@Id\n\t@GeneratedValue(generator = "increment")\n\t@GenericGenerator(name = "increment", strategy = "increment")\n\tprivate Long id;'
                 updated_code = updated_code.replace(attributes[0][0], id_annotation + '\n\t' + attributes[0][0], 1)
 
                 for attribute, attribute_name in attributes:

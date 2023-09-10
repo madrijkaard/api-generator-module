@@ -13,6 +13,7 @@ public class ExampleModel {
     @Id
 	@GeneratedValue(generator = "increment")
 	@GenericGenerator(name = "increment", strategy = "increment")
+	private Long id;
 	@Column(name = "codigo")
 	private String codigo;
     @Column(name = "descricao")

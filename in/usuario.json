@@ -1,0 +1,10 @@
+{
+    "codigo" : "String",
+    "nome_usuario" : "String",
+    "senha" : "String",
+    "email" : "String",
+    "aniversario" : "java.time.LocalDate",
+    "data_tempo_cadastro" : "java.time.LocalDateTime",
+    "data_tempo_ultima_modificacao" : "java.time.LocalDateTime",
+    "status" : "boolean"
+}
