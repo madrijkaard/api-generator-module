@@ -1,11 +1,11 @@
 {
-    "spring-boot-starter-parent-version": "2.7.14",
+    "spring-boot-starter-parent-version": "3.1.3",
     "group-id": "com.mxs",
     "artifact-id": "user-module",
     "project-name": "mxs-user-module",
     "description" : "Module responsible for managing platform users.",
     "main-package": "com.mxs.user",
-    "java-version": 11,
+    "java-version": 20,
     "jpa": true,
     "custom-property": false,
     "custom-dependency": false,

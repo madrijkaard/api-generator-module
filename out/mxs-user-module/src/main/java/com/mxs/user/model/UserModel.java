@@ -1,6 +1,6 @@
 package com.mxs.user.model;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -8,21 +8,21 @@ import java.util.UUID;
 @Entity(name = "user")
 public class UserModel {
 
-    @Column(name = "code", nullable = true)
+    @Column(name = "code")
 	private UUID code;
-    @Column(name = "username", nullable = true)
+    @Column(name = "username")
 	private String username;
-    @Column(name = "password", nullable = true)
+    @Column(name = "password")
 	private String password;
-    @Column(name = "email", nullable = true)
+    @Column(name = "email")
 	private String email;
-    @Column(name = "date_of_birth", nullable = true)
+    @Column(name = "date_of_birth")
 	private LocalDate dateOfBirth;
-    @Column(name = "registration_date", nullable = true)
+    @Column(name = "registration_date")
 	private LocalDateTime registrationDate;
-    @Column(name = "last_modified_date", nullable = true)
+    @Column(name = "last_modified_date")
 	private LocalDateTime lastModifiedDate;
-    @Column(name = "status", nullable = true)
+    @Column(name = "status")
 	private boolean status;
 
     public UserModel() {}

@@ -1,6 +1,6 @@
 package com.mxs.user.model;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -9,17 +9,17 @@ import java.util.Set;
 @Entity(name = "example")
 public class ExampleModel {
 
-    @Column(name = "codigo", nullable = true)
+    @Column(name = "codigo")
 	private String codigo;
-    @Column(name = "descricao", nullable = true)
+    @Column(name = "descricao")
 	private String descricao;
-    @Column(name = "status", nullable = true)
+    @Column(name = "status")
 	private int status;
-    @Column(name = "data_criacao", nullable = true)
+    @Column(name = "data_criacao")
 	private LocalDateTime dataCriacao;
-    @Column(name = "data_modificacao", nullable = true)
+    @Column(name = "data_modificacao")
 	private LocalDateTime dataModificacao;
-    @Column(name = "numero_grande", nullable = true)
+    @Column(name = "numero_grande")
 	private BigDecimal numeroGrande;
     private List<String> listaCompra;
     private Set<BigDecimal> listaVenda;
